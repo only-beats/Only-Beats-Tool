@@ -1,1 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Only-Beats-Tool</title>
+    <link rel="icon" href="svg/headphone-alt-2.svg" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #eef2ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffffff, #7c8ef9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header p {
+            color: #9aa9cf;
+            margin-top: 8px;
+        }
+
+        .url-example {
+            background: #0b0f1c;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            color: #6fdb92;
+            word-break: break-all;
+            display: inline-block;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #2a2f4e;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #9aa9cf;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(76, 110, 245, 0.2);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: #4c6ef5;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 110, 245, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(14, 19, 37, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            border: 1px solid #2a2f4e;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background: #0b1022;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #262e4e;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: -1.8rem -1.8rem 1.5rem -1.8rem;
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+
+        .badge-icon {
+            background: #4c6ef5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: normal;
+        }
+
+        .badge {
+            background: #4c6ef5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: rgba(18, 25, 45, 0.7);
+            border: 2px dashed #4c6ef5;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .upload-area:hover {
+            background: rgba(76, 110, 245, 0.1);
+            border-color: #7c94f5;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-label {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #4c6ef5;
+            padding: 12px 28px;
+            border-radius: 2rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .upload-label:hover {
+            background: #6a82fc;
+            transform: scale(1.02);
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            background: #4c6ef5;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #6a82fc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 110, 245, 0.25);
+        }
+
+        button.secondary {
+            background: #2a3355;
+        }
+
+        button.secondary:hover {
+            background: #3f4a72;
+        }
+
+        button.success {
+            background: #1f6e43;
+        }
+
+        button.success:hover {
+            background: #2a8a55;
+        }
+
+        button.outline {
+            background: transparent;
+            border: 1px solid #4c6ef5;
+            color: #b3c7ff;
+        }
+
+        button.outline:hover {
+            background: #4c6ef522;
+        }
+
+        /* Status */
+        .status-box {
+            padding: 12px 18px;
+            border-radius: 60px;
+            background: #0b1022;
+            border-left: 4px solid #4c6ef5;
+            font-size: 0.85rem;
+            margin: 0.75rem 0 0.25rem;
+            color: #c8d6ff;
+        }
+
+        .status-box.error {
+            border-left-color: #ff5e6e;
+            color: #ffb3bd;
+        }
+
+        .status-msg {
+            padding: 10px 16px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .status-success {
+            background: #1f5e3a30;
+            border-left: 4px solid #4cd964;
+            color: #c0ffd6;
+        }
+
+        .status-error {
+            background: #792e3e30;
+            border-left: 4px solid #ff5e6e;
+            color: #ffbfc9;
+        }
+
+        /* Table */
+        .table-wrap {
+            background: #0b0f1c;
+            border-radius: 1.2rem;
+            overflow: auto;
+            max-height: 420px;
+            border: 1px solid #222b44;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            font-family: 'Segoe UI', monospace;
+            min-width: 700px;
+        }
+
+        th {
+            background: #121b32;
+            color: #7c8ef9;
+            font-weight: 700;
+            padding: 12px 10px;
+            border-bottom: 2px solid #2a3550;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #1d2640;
+            color: #d1d9ff;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .row-num {
+            color: #6c7aa3;
+            text-align: center;
+            width: 40px;
+            background: #080d1a;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 30px;
+            padding: 0.4rem 0 0.8rem;
+            color: #9aa9cf;
+            font-size: 0.85rem;
+        }
+
+        .stats span {
+            color: #b9c8ff;
+            font-weight: 600;
+        }
+
+        .preview-box {
+            background: #0a0f1c;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.7rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 320px;
+            overflow: auto;
+            border: 1px solid #1f2844;
+            color: #d6e6ff;
+            margin: 1rem 0;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #0a0f1c;
+            border: 1px solid #222b44;
+            border-radius: 1rem;
+            padding: 1rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #d6e6ff;
+            resize: vertical;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .json-preview-area {
+            background: #0a0f1c;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 320px;
+            overflow: auto;
+            border: 1px solid #1f2844;
+            color: #d6e6ff;
+            min-height: 200px;
+        }
+
+        /* Sheet Selector */
+        .sheet-selector {
+            background: rgba(18, 25, 45, 0.7);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            border: 1px solid #2a2f4e;
+        }
+
+        .sheet-selector label {
+            font-weight: 600;
+            color: #b9c8ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sheet-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .sheet-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f4e;
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #d1d9ff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .sheet-btn:hover {
+            background: rgba(76, 110, 245, 0.2);
+            border-color: #4c6ef5;
+        }
+
+        .sheet-btn.active {
+            background: #4c6ef5;
+            border-color: #4c6ef5;
+            color: white;
+        }
+
+        .sheet-info {
+            font-size: 0.75rem;
+            color: #6c7db3;
+            padding: 0 1rem;
+        }
+
+        .preview-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stats-bar {
+            background: #0a0f1e;
+            padding: 8px 12px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .stats-bar span {
+            color: #4c6ef5;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5a6d94;
+            border-top: 1px solid #1d2640;
+            padding-top: 1.2rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0b1f2b;
+            color: #d6eaff;
+            padding: 10px 28px;
+            border-radius: 60px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            border: 1px solid #4c6ef5;
+            font-size: 0.85rem;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .copy-hint {
+            font-size: 0.65rem;
+            color: #6c7db3;
+            padding: 0.5rem 0;
+        }
+
+        .status {
+            padding: 10px 16px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .status.success {
+            background: #1f5e3a30;
+            border-left: 4px solid #4cd964;
+            color: #c0ffd6;
+        }
+
+        .status.error {
+            background: #792e3e30;
+            border-left: 4px solid #ff5e6e;
+            color: #ffbfc9;
+        }
+
+        @media (max-width: 1024px) {
+            .preview-area {
+                grid-template-columns: 1fr;
+            }
+
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .card {
+                padding: 1.2rem;
+            }
+
+            .card-header {
+                margin: -1.2rem -1.2rem 1rem -1.2rem;
+                padding: 0.8rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <img src="svg/headphone-alt-2.svg" alt="Tool"
+                    style="width: 26px; height: 26px; filter: brightness(0) invert(1);">
+                Only-Beats-Tool
+            </h1>
+            <p>JS → Excel · Excel → JSON · JSON Resequencer</p>
+            <div class="url-example">
+                <img src="svg/link.svg" alt="Link"
+                    style="width: 10px; height: 10px; filter: brightness(0) invert(1); margin-right: 3px;">
+                Base URL: https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/{song}.mp3
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <!-- Tab Navigation with Link -->
+        <div
+            style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; border-bottom: 1px solid #2a2f4e; padding-bottom: 0.5rem; margin-bottom: 2rem;">
+            <button class="tab-btn active" data-tab="js-to-excel">
+                <img src="svg/code-alt.svg" alt="JS"
+                    style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                JS → Excel
+            </button>
+            <button class="tab-btn" data-tab="excel-to-json">
+                <img src="svg/chart-bar-columns.svg" alt="Excel"
+                    style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                Excel → JSON
+            </button>
+            <button class="tab-btn" data-tab="json-resequencer">
+                <img src="svg/refresh-cw-alt.svg" alt="Resequence"
+                    style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                JSON Resequencer
+            </button>
+
+            <div style="flex: 1; min-width: 20px;"></div>
+
+            <a href="index1.html" style="
+        background: rgba(29, 185, 84, 0.12);
+        color: #1DB954;
+        padding: 8px 18px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(29, 185, 84, 0.25);
+        transition: all 0.2s;
+        font-family: inherit;
+        white-space: nowrap;
+    " onmouseover="this.style.background='rgba(29,185,84,0.25)'; this.style.transform='scale(1.02)'"
+                onmouseout="this.style.background='rgba(29,185,84,0.12)'; this.style.transform='scale(1)'">
+                <img src="svg/link.svg" alt="Link"
+                    style="width: 16px; height: 16px; filter: brightness(0) invert(1); opacity: 0.7;">
+                Generate Lyrics URLs
+            </a>
+            <a href="index3.html" style="
+        background: rgba(29, 185, 84, 0.12);
+        color: #1DB954;
+        padding: 8px 18px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(29, 185, 84, 0.25);
+        transition: all 0.2s;
+        font-family: inherit;
+        white-space: nowrap;
+    " onmouseover="this.style.background='rgba(29,185,84,0.25)'; this.style.transform='scale(1.02)'"
+                onmouseout="this.style.background='rgba(29,185,84,0.12)'; this.style.transform='scale(1)'">
+                <img src="svg/link.svg" alt="Link"
+                    style="width: 16px; height: 16px; filter: brightness(0) invert(1); opacity: 0.7;">
+                Music Metadata Extractor
+            </a>
+
+            <a href="index2.html" style="
+        background: rgba(29, 185, 84, 0.12);
+        color: #1DB954;
+        padding: 8px 18px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(29, 185, 84, 0.25);
+        transition: all 0.2s;
+        font-family: inherit;
+        white-space: nowrap;
+    " onmouseover="this.style.background='rgba(29,185,84,0.25)'; this.style.transform='scale(1.02)'"
+                onmouseout="this.style.background='rgba(29,185,84,0.12)'; this.style.transform='scale(1)'">
+                <img src="svg/link.svg" alt="Link"
+                    style="width: 16px; height: 16px; filter: brightness(0) invert(1); opacity: 0.7;">
+                Playlist Analyzer
+            </a>
+        </div>
+
+
+    </div>
+
+    <!-- .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #9aa9cf;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(76, 110, 245, 0.2);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: #4c6ef5;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 110, 245, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+            -->
+
+    <!-- ==================== TAB 1: JS → EXCEL ==================== -->
+    <div id="js-to-excelTab" class="tab-content active">
+        <div class="card">
+            <div class="card-header">
+                <img src="svg/code-alt.svg" alt="JS"
+                    style="width: 18px; height: 18px; filter: brightness(0) invert(1); margin-right: 3px;">
+                JS Array → Excel Generator
+                <span class="badge-icon">SONGS_DATABASE</span>
+            </div>
+
+            <div class="flex-row">
+                <div class="upload-area" id="uploadAreaJS">
+                    <input type="file" id="jsFileInput" accept=".js,.txt,.json" />
+                    <label class="upload-label" for="jsFileInput">
+                        <img src="svg/folder.svg" alt="Folder"
+                            style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                        Upload .js file
+                    </label>
+                    <div style="margin-top:10px;font-size:0.8rem;color:#6c7db3;">or paste array below</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:140px;">
+                    <span class="badge-icon" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <img src="svg/database.svg" alt="Database"
+                            style="width: 14px; height: 14px; filter: brightness(0) invert(1);">
+                        expects <strong>SONGS_DATABASE</strong>
+                    </span>
+                    <span class="badge-icon"
+                        style="background:#1f2a44; display: inline-flex; align-items: center; gap: 6px;">
+                        <img src="svg/table-rows-merge.svg" alt="Columns"
+                            style="width: 14px; height: 14px; filter: brightness(0) invert(1);">
+                        columns: ID, Title, Artists, Album, Cover
+                    </span>
+                </div>
+            </div>
+
+            <div style="margin-top:0.8rem;">
+                <label style="font-weight:500;color:#b9c8ff;display:block;margin-bottom:4px;">
+                    <img src="svg/edit.svg" alt="Edit"
+                        style="width: 14px; height: 14px; filter: brightness(0) invert(1); margin-right: 4px;">
+                    Paste or edit array (JSON)
+                </label>
+                <textarea id="jsonEditor" rows="3">[]</textarea>
+            </div>
+
+            <div class="btn-group">
+                <button id="generateBtn">
+                    <img src="svg/refresh-cw-alt.svg" alt="Generate"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Generate Excel
+                </button>
+                <button id="copyTableBtn" class="secondary">
+                    <img src="svg/copy.svg" alt="Copy"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Copy Table
+                </button>
+                <button id="clearBtn" class="outline">
+                    <img src="svg/trash.svg" alt="Clear"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Clear
+                </button>
+                <button id="loadExampleBtn" class="secondary">
+                    <img src="svg/eye-alt.svg" alt="Example"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Load Example
+                </button>
+            </div>
+
+            <div id="statusMsgJS" class="status-box">
+                <img src="svg/light-bulb-alt.svg" alt="Info"
+                    style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">
+                Upload a .js file or paste a valid JSON array
+            </div>
+            <div class="stats" id="statsRow">
+                <span style="display: inline-flex; align-items: center; gap: 4px;">
+                    <img src="svg/folder-down-arrow.svg" alt="Rows"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Rows: <span id="rowCount">0</span>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 4px;">
+                    <img src="svg/list-music.svg" alt="Songs"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Songs: <span id="songCount">0</span>
+                </span>
+            </div>
+
+            <div class="table-wrap" id="tableWrap">
+                <table id="previewTable">
+                    <thead id="tableHead">
+                        <tr>
+                            <th>#</th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Artists</th>
+                            <th>Album</th>
+                            <th>Cover URL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyJS"></tbody>
+                </table>
+            </div>
+
+            <div class="preview-box" id="jsonPreview">[]</div>
+
+            <div class="footer">
+                <button id="downloadExcelBtn" style="background:#1f6e43;">
+                    <img src="svg/folder-down-arrow.svg" alt="Download"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Download .xlsx
+                </button>
+                <span style="margin-left:1rem;color:#5a6d94;">Excel: ID · Title · Artists · Album · Cover URL</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 2: EXCEL → JSON ==================== -->
+    <div id="excel-to-jsonTab" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <img src="svg/chart-bar-columns.svg" alt="Excel"
+                    style="width: 18px; height: 18px; filter: brightness(0) invert(1); margin-right: 3px;">
+                Excel to JSON Generator
+                <span class="badge-icon">Multi-Sheet Support</span>
+            </div>
+
+            <div class="upload-area" id="uploadAreaExcel">
+                <input type="file" id="excelInput" accept=".xlsx, .xls, .csv">
+                <label class="upload-label" for="excelInput">
+                    <img src="svg/folder.svg" alt="Folder"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                    Click or Drag & Drop Excel/CSV File
+                </label>
+                <p style="margin-top:1rem;font-size:0.8rem;color:#7c88aa;">
+                    Required columns: Title, Artist, Album, Cover Image URL (ID is optional)
+                </p>
+            </div>
+
+            <div id="sheetSelectorContainer" style="display:none;">
+                <div class="sheet-selector">
+                    <label>
+                        <img src="svg/table-rows-merge.svg" alt="Sheets"
+                            style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                        Select Sheet:
+                    </label>
+                    <div id="sheetButtons" class="sheet-buttons"></div>
+                    <div id="sheetInfo" class="sheet-info"></div>
+                </div>
+            </div>
+
+            <div id="excelStatus"></div>
+
+            <div class="preview-area" id="previewArea" style="display:none;">
+                <div>
+                    <h3 style="color:#b9c8ff;margin-bottom:0.5rem;display:flex;align-items:center;gap:8px;">
+                        <img src="svg/eye-alt.svg" alt="Preview"
+                            style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                        Excel Preview <span class="badge" id="rowCountExcel">0</span> rows
+                    </h3>
+                    <div class="stats-bar" id="statsBar"></div>
+                    <div class="table-wrap" style="max-height:350px;">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+                            <thead id="tableHeaderExcel"></thead>
+                            <tbody id="tableBodyExcel"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color:#b9c8ff;margin-bottom:0.5rem;display:flex;align-items:center;gap:8px;">
+                        <img src="svg/link.svg" alt="JSON"
+                            style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                        Generated JSON
+                    </h3>
+                    <div class="preview-box" id="jsonOutput" style="max-height:350px;">[]</div>
+                    <div class="btn-group" style="margin-top:0.5rem;">
+                        <button id="copyJsonBtn">
+                            <img src="svg/copy.svg" alt="Copy"
+                                style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                            Copy JSON
+                        </button>
+                        <button id="downloadJsonBtn" class="success">
+                            <img src="svg/folder-down-arrow.svg" alt="Download"
+                                style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                            Download JSON
+                        </button>
+                        <button id="clearExcelBtn" class="secondary">
+                            <img src="svg/trash.svg" alt="Clear"
+                                style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 3: JSON RESEQUENCER ==================== -->
+    <div id="json-resequencerTab" class="tab-content">
+        <div class="two-columns">
+            <div class="card" style="margin-bottom:0;">
+                <div class="card-header">
+                    <img src="svg/edit.svg" alt="Edit"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1); margin-right: 3px;">
+                    1. Paste Your JSON Array
+                    <span class="badge-icon">any IDs</span>
+                </div>
+                <textarea id="jsonInputArea" rows="12" placeholder='Paste JSON array here...'></textarea>
+                <div class="btn-group" style="margin-top:0.5rem;">
+                    <button id="pasteExampleBtn" class="outline">
+                        <img src="svg/eye-alt.svg" alt="Example"
+                            style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Load Example
+                    </button>
+                    <button id="processJsonBtn">
+                        <img src="svg/refresh-cw-alt.svg" alt="Resequence"
+                            style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Resequence IDs → 1,2,3...
+                    </button>
+                    <button id="clearInputBtn" class="secondary">
+                        <img src="svg/trash.svg" alt="Clear"
+                            style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Clear
+                    </button>
+                </div>
+                <div id="inputStatus"></div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+                <div class="card-header">
+                    <img src="svg/scan-detail.svg" alt="Output"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1); margin-right: 3px;">
+                    2. New JSON · Sequential IDs
+                    <span class="badge-icon" id="outputCountBadge">0 items</span>
+                </div>
+                <div class="json-preview-area" id="outputJsonDisplay">
+                    { "✨": "Paste JSON and click 'Resequence IDs'" }
+                </div>
+                <div class="btn-group" style="margin-top:0.5rem;">
+                    <button id="copyOutputBtn" class="success">
+                        <img src="svg/copy.svg" alt="Copy"
+                            style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Copy New JSON
+                    </button>
+                    <button id="downloadOutputBtn">
+                        <img src="svg/folder-down-arrow.svg" alt="Download"
+                            style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Download .json
+                    </button>
+                </div>
+                <div class="copy-hint">
+                    <img src="svg/list-ul.svg" alt="Check"
+                        style="width: 13px; height: 13px; filter: brightness(0) invert(1); margin-right: 3px; margin-bottom: -3px;">
+                    IDs automatically become 1, 2, 3... based on original order
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div id="toast" class="toast"><img src="svg/check-square.svg" alt="Check"
+            style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> Copied!
+    </div>
+
+    <div class="footer">
+        <img src="svg/headphone-alt-2.svg" alt="Only-Beats"
+            style="width:14px;height:14px;filter:brightness(0) invert(1);opacity:0.4;margin-right:4px;vertical-align:middle;" />
+        Only-Beats-Tool · By Dhananjay Patil
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script>
+        // ============================================================
+        // ==================== TAB SWITCHING ===========================
+        // ============================================================
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetId = tab.getAttribute('data-tab');
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${targetId}Tab`).classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // ==================== TOAST ===================================
+        // ============================================================
+        const toastEl = document.getElementById('toast');
+        let toastTimer;
+
+        function showToast(msg) {
+            // Replace 📋 with clipboard-check.svg
+            if (msg.includes('📋')) {
+                msg = msg.replace('📋', '<img src="svg/clipboard-check.svg" alt="Clipboard" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">');
+            }
+            toastEl.innerHTML = msg;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+        }
+        // ============================================================
+        // ==================== TAB 1: JS → EXCEL ======================
+        // ============================================================
+        (function () {
+            let currentSongs = [];
+            const tableBody = document.getElementById('tableBodyJS');
+            const rowCountSpan = document.getElementById('rowCount');
+            const songCountSpan = document.getElementById('songCount');
+            const jsonPreview = document.getElementById('jsonPreview');
+            const statusMsg = document.getElementById('statusMsgJS');
+            const jsonEditor = document.getElementById('jsonEditor');
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return String(text).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+            }
+
+            function setStatus(msg, isError = false) {
+                // Replace 💡 with light-bulb-alt.svg
+                if (msg.includes('💡')) {
+                    msg = msg.replace('💡', '<img src="svg/light-bulb-alt.svg" alt="Info" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">');
+                }
+                // If msg contains ⚠️, replace it with alert-triangle.svg
+                if (msg.includes('⚠️')) {
+                    msg = msg.replace('⚠️', '<img src="svg/alert-triangle.svg" alt="Warning" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">');
+                }
+                // If msg contains 🧹, replace it with broom.svg
+                if (msg.includes('🧹')) {
+                    msg = msg.replace('🧹', '<img src="svg/broom.svg" alt="Clear" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">');
+                }
+                // If msg contains 📋, replace it with clipboard-check.svg
+                if (msg.includes('📋')) {
+                    msg = msg.replace('📋', '<img src="svg/clipboard-check.svg" alt="Clipboard" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 6px; vertical-align: middle;">');
+                }
+                statusMsg.innerHTML = msg;
+                statusMsg.className = 'status-box' + (isError ? ' error' : '');
+            }
+
+            function render(songs) {
+                if (!Array.isArray(songs) || songs.length === 0) {
+                    tableBody.innerHTML =
+                        `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#6c7db3;">
+                <img src="svg/file.svg" alt="Info" style="width: 20px; height: 20px; filter: brightness(0) invert(1); margin-right: 8px; vertical-align: middle;">
+                No data loaded
+            </td></tr>`;
+                    rowCountSpan.textContent = '0';
+                    songCountSpan.textContent = '0';
+                    jsonPreview.textContent = '[]';
+                    return;
+                }
+
+                let html = '';
+                songs.forEach((s, idx) => {
+                    const id = s.id ?? idx + 1;
+                    const title = s.title || '—';
+                    const artist = s.artist || '—';
+                    const album = s.album || '—';
+                    const cover = s.cover || '—';
+                    html += `<tr>
+                        <td class="row-num">${idx + 1}</td>
+                        <td>${escapeHtml(String(id))}</td>
+                        <td><strong>${escapeHtml(title)}</strong></td>
+                        <td>${escapeHtml(artist)}</td>
+                        <td>${escapeHtml(album)}</td>
+                        <td style="font-size:0.65rem;color:#8aa3d4;max-width:180px;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(cover)}</td>
+                    </tr>`;
+                });
+                tableBody.innerHTML = html;
+
+                rowCountSpan.textContent = songs.length;
+                songCountSpan.textContent = songs.length;
+                jsonPreview.textContent = JSON.stringify(songs, null, 4);
+                jsonEditor.value = JSON.stringify(songs, null, 4);
+            }
+
+            function parseArrayFromText(text) {
+                let cleaned = text.trim();
+
+                // Extract only the SONGS_DATABASE array - stop before APP_SETTINGS or any other code
+                const match = cleaned.match(/const\s+SONGS_DATABASE\s*=\s*([\s\S]*?)(?=\/\/\s*App\s+settings|const\s+APP_SETTINGS|$)/);
+                if (match && match[1]) {
+                    cleaned = match[1].trim();
+                }
+
+                // Remove trailing commas before closing brackets/braces
+                cleaned = cleaned.replace(/,(\s*[}\]])/g, '$1');
+
+                // Try to find the array
+                const arrayMatch = cleaned.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                if (arrayMatch) {
+                    try {
+                        return JSON.parse(arrayMatch[0]);
+                    } catch (_) { }
+                }
+
+                try {
+                    let parsed = JSON.parse(cleaned);
+                    if (Array.isArray(parsed)) return parsed;
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        return [parsed];
+                    }
+                    return null;
+                } catch (e) {
+                    try {
+                        let fixed = cleaned.replace(/,\s*}/g, '}').replace(/,\s*\]/g, ']').replace(/'/g, '"');
+                        const fixedMatch = fixed.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                        if (fixedMatch) {
+                            return JSON.parse(fixedMatch[0]);
+                        }
+                        return null;
+                    } catch (_) {
+                        return null;
+                    }
+                }
+            }
+
+            function loadSongsFromText(text) {
+                const parsed = parseArrayFromText(text);
+                if (!parsed || !Array.isArray(parsed) || parsed.length === 0) {
+                    setStatus('<img src="svg/x.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">Could not parse array. Expected JSON array or const SONGS_DATABASE = [...]', true);
+                    return false;
+                }
+                const valid = parsed.filter(item => item && typeof item === 'object');
+                if (valid.length === 0) {
+                    setStatus('❌ No valid song objects found', true);
+                    return false;
+                }
+                currentSongs = valid;
+                render(currentSongs);
+                setStatus(`Loaded ${currentSongs.length} songs`);
+                return true;
+            }
+
+            function handleFile(file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const ok = loadSongsFromText(e.target.result);
+                    if (ok) showToast('📂 File loaded');
+                    else setStatus('❌ File does not contain a valid SONGS_DATABASE array', true);
+                };
+                reader.onerror = () => setStatus('❌ Error reading file', true);
+                reader.readAsText(file);
+            }
+
+            function generateExcel(songs) {
+                if (!songs || songs.length === 0) {
+                    setStatus('<img src="svg/x.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">No songs to export', true);
+                    return null;
+                }
+                const header = ['ID', 'Title', 'Artists', 'Album', 'Cover Image URL'];
+                const rows = songs.map(s => [
+                    s.id ?? '',
+                    s.title ?? '',
+                    s.artist ?? '',
+                    s.album ?? '',
+                    s.cover ?? ''
+                ]);
+                const wbData = [header, ...rows];
+                const ws = XLSX.utils.aoa_to_sheet(wbData);
+                ws['!cols'] = [{ wch: 8 }, { wch: 30 }, { wch: 24 }, { wch: 24 }, { wch: 48 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Songs');
+                return wb;
+            }
+
+            function downloadExcel(songs) {
+                const wb = generateExcel(songs);
+                if (!wb) return;
+                XLSX.writeFile(wb, 'SONGS_DATABASE.xlsx');
+                showToast('<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> Excel downloaded!');
+                setStatus(`<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> Exported ${songs.length} songs to .xlsx`);
+            }
+
+            function copyTable(songs) {
+                if (!songs || songs.length === 0) {
+                    setStatus('<img src="svg/alert-triangle.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">No data to copy', true);
+                    return;
+                }
+                const header = ['ID', 'Title', 'Artists', 'Album', 'Cover Image URL'];
+                const rows = songs.map(s => [
+                    s.id ?? '',
+                    s.title ?? '',
+                    s.artist ?? '',
+                    s.album ?? '',
+                    s.cover ?? ''
+                ]);
+                const all = [header, ...rows];
+                const tsv = all.map(row => row.join('\t')).join('\n');
+                navigator.clipboard.writeText(tsv).then(() => {
+                    showToast('Table copied (TSV)');
+                    setStatus('<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">Table copied to clipboard');
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = tsv;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showToast('Table copied');
+                    setStatus('Table copied');
+                });
+            }
+
+            // Event listeners
+            document.getElementById('jsFileInput').addEventListener('change', function (e) {
+                if (this.files && this.files[0]) {
+                    handleFile(this.files[0]);
+                }
+                this.value = '';
+            });
+
+            document.getElementById('generateBtn').addEventListener('click', function () {
+                const text = jsonEditor.value;
+                if (!text.trim()) {
+                    setStatus('Paste JSON array or load a .js file first', true);
+                    return;
+                }
+                loadSongsFromText(text);
+            });
+
+            document.getElementById('copyTableBtn').addEventListener('click', function () {
+                copyTable(currentSongs);
+            });
+
+            document.getElementById('downloadExcelBtn').addEventListener('click', function () {
+                downloadExcel(currentSongs);
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', function () {
+                currentSongs = [];
+                render([]);
+                jsonEditor.value = '[]';
+                setStatus('<img src="svg/broom.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">Cleared');
+                showToast('Cleared');
+            });
+
+            document.getElementById('loadExampleBtn').addEventListener('click', function () {
+                const example = [
+                    {
+                        "id": 1, "title": "Dheera Dheera", "artist": "M. M. Keeravaani", "album": "Magadheera",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e027722f8cc9eb81ac63de065d0"
+                    },
+                    {
+                        "id": 2, "title": "Edhuta Nilichindhi", "artist": "Karthik", "album": "Vaana",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0289c6dd12b46ab6485c050611"
+                    },
+                    {
+                        "id": 3, "title": "Inkem Inkem Inkem Kaavaale", "artist": "Sid Sriram", "album": "Geetha Govindam",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d36ad1902c1eb3edc2639e4b"
+                    }
+                ];
+                currentSongs = example;
+                render(currentSongs);
+                setStatus(`<img src="svg/circle-dashed-half.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">Loaded example: ${example.length} songs`);
+                showToast('Example loaded');
+            });
+
+            const uploadAreaJS = document.getElementById('uploadAreaJS');
+            uploadAreaJS.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadAreaJS.style.borderColor = '#7c94f5';
+            });
+            uploadAreaJS.addEventListener('dragleave', () => { uploadAreaJS.style.borderColor = '#4c6ef5'; });
+            uploadAreaJS.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadAreaJS.style.borderColor = '#4c6ef5';
+                const file = e.dataTransfer.files[0];
+                if (file && (file.name.endsWith('.js') || file.name.endsWith('.txt') || file.name.endsWith('.json'))) {
+                    handleFile(file);
+                } else {
+                    setStatus('Please drop a .js, .txt or .json file', true);
+                }
+            });
+
+            render([]);
+            setStatus('Upload a .js file or paste JSON array');
+        })();
+
+        // ============================================================
+        // ==================== TAB 2: EXCEL → JSON ====================
+        // ============================================================
+        (function () {
+            let currentData = [];
+            let currentHeaders = [];
+            let currentRows = [];
+            let workbookData = null;
+            let sheetNames = [];
+            let currentSheetIndex = 0;
+
+            function escapeHtml(str) {
+                return str ? String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) : '';
+            }
+
+            function titleToRawUrl(title) {
+                if (!title || title.trim() === "") return "untitled.mp3";
+                let clean = title.trim().replace(/\.mp3$/i, '');
+                return encodeURIComponent(clean) + ".mp3";
+            }
+
+            function buildMp3Url(title) {
+                const baseUrl = "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/";
+                if (!title || title.trim() === "") return baseUrl + "placeholder.mp3";
+                return baseUrl + titleToRawUrl(title);
+            }
+
+            function generateJsonFromExcel(rows, headers) {
+                const idIdx = headers.findIndex(h => h.toLowerCase() === 'id' || h.toLowerCase() === 'song id');
+                const titleIdx = headers.findIndex(h => h.toLowerCase() === 'title' || h.toLowerCase() === 'song title' || h
+                    .toLowerCase() === 'name');
+                const artistIdx = headers.findIndex(h => h.toLowerCase() === 'artist' || h.toLowerCase() === 'artists' || h
+                    .toLowerCase() === 'contributing artists');
+                const albumIdx = headers.findIndex(h => h.toLowerCase() === 'album');
+                const coverIdx = headers.findIndex(h => h.toLowerCase() === 'cover' || h.toLowerCase() === 'cover image url' ||
+                    h.toLowerCase() === 'image url');
+
+                if (titleIdx === -1) throw new Error("Could not find 'Title' column in this sheet");
+
+                const jsonArray = [];
+                let autoId = 1;
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (!row || row.length === 0) continue;
+
+                    let title = titleIdx !== -1 && row[titleIdx] ? String(row[titleIdx]).trim() : "";
+                    if (title === "") continue;
+
+                    let id;
+                    if (idIdx !== -1 && row[idIdx] && !isNaN(parseInt(row[idIdx]))) {
+                        id = parseInt(row[idIdx]);
+                    } else {
+                        id = autoId++;
+                    }
+
+                    let artist = artistIdx !== -1 && row[artistIdx] ? String(row[artistIdx]).trim() : "--";
+                    let album = albumIdx !== -1 && row[albumIdx] ? String(row[albumIdx]).trim() : "--";
+                    let cover = coverIdx !== -1 && row[coverIdx] ? String(row[coverIdx]).trim() :
+                        "https://via.placeholder.com/300?text=No+Cover";
+
+                    jsonArray.push({
+                        id: id,
+                        title: title,
+                        artist: artist || "--",
+                        album: album || "--",
+                        cover: cover || "https://via.placeholder.com/300?text=No+Cover",
+                        url: buildMp3Url(title)
+                    });
+                }
+                return jsonArray;
+            }
+
+            function displayExcelTable(rows, headers) {
+                const tableHeader = document.getElementById('tableHeaderExcel');
+                const tableBody = document.getElementById('tableBodyExcel');
+                const rowCountSpan = document.getElementById('rowCountExcel');
+                const statsBar = document.getElementById('statsBar');
+
+                const totalRows = rows.length - 1;
+                rowCountSpan.textContent = totalRows;
+                statsBar.innerHTML =
+                    `<span style="display: inline-flex; align-items: center; gap: 6px;">
+        <img src="svg/database.svg" alt="DB" style="width:14px;height:14px;filter:brightness(0) invert(1);">
+        Total Rows: <span>${totalRows}</span>
+    </span>
+    &nbsp;|&nbsp;
+    <span style="display: inline-flex; align-items: center; gap: 6px;">
+        <img src="svg/list-music.svg" alt="Music" style="width:14px;height:14px;filter:brightness(0) invert(1);">
+        Songs: <span>${currentData.length}</span>
+    </span>`;
+                let headerHtml = '<tr><th class="row-num">#</th>';
+                headers.forEach(header => {
+                    headerHtml += `<th>${escapeHtml(header.length > 20 ? header.substring(0, 20) + '...' : header)}</th>`;
+                });
+                headerHtml += '</tr>';
+                tableHeader.innerHTML = headerHtml;
+
+                let bodyHtml = '';
+                const maxDisplay = Math.min(rows.length - 1, 100);
+                for (let i = 1; i <= maxDisplay; i++) {
+                    const row = rows[i];
+                    if (!row) continue;
+                    bodyHtml += `<tr><td class="row-num">${i}</td>`;
+                    for (let j = 0; j < headers.length; j++) {
+                        let val = row[j] !== undefined ? String(row[j]) : "--";
+                        bodyHtml +=
+                            `<td title="${escapeHtml(val)}">${escapeHtml(val.length > 50 ? val.substring(0, 47) + '...' : val)}</td>`;
+                    }
+                    bodyHtml += '</tr>';
+                }
+                tableBody.innerHTML = bodyHtml;
+            }
+
+            function displayJsonOutput(jsonData) {
+                document.getElementById('jsonOutput').textContent = JSON.stringify(jsonData, null, 4);
+            }
+
+            function showExcelStatus(message, type) {
+                const div = document.getElementById('excelStatus');
+                div.innerHTML = `<div class="status ${type}">${message}</div>`;
+                setTimeout(() => { if (div.innerHTML.includes(message)) div.innerHTML = ''; }, 5000);
+            }
+
+            function processSheet(sheetIndex) {
+                if (!workbookData || !sheetNames.length) return;
+
+                currentSheetIndex = sheetIndex;
+                const sheetName = sheetNames[sheetIndex];
+                const worksheet = workbookData.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+
+                if (!rows || rows.length < 2) {
+                    showExcelStatus(`Sheet "${sheetName}" is empty or has no data rows`, "error");
+                    return;
+                }
+
+                const headers = rows[0].map(cell => String(cell || "").trim());
+                currentRows = rows;
+                currentHeaders = headers;
+
+                try {
+                    const jsonData = generateJsonFromExcel(rows, headers);
+                    if (jsonData.length === 0) throw new Error("No valid songs found in this sheet");
+                    currentData = jsonData;
+                    displayExcelTable(rows, headers);
+                    displayJsonOutput(jsonData);
+                    showExcelStatus(
+                        `<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-3px;"> Sheet "${sheetName}": Imported ${jsonData.length} songs!`,
+                        "success");
+                    document.getElementById('previewArea').style.display = 'grid';
+                } catch (error) {
+                    showExcelStatus(`Error in sheet "${sheetName}": ${error.message}`, "error");
+                }
+
+                document.querySelectorAll('.sheet-btn').forEach((btn, idx) => {
+                    btn.classList.toggle('active', idx === sheetIndex);
+                });
+                document.getElementById('sheetInfo').innerHTML =
+                    `<img src="svg/file-report.svg" alt="File" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;"> Currently viewing: <strong>${escapeHtml(sheetName)}</strong> (${currentData.length} songs)`;
+            }
+
+            function renderSheetSelector() {
+                const container = document.getElementById('sheetSelectorContainer');
+                const buttonsDiv = document.getElementById('sheetButtons');
+
+                if (!sheetNames.length) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                container.style.display = 'block';
+                buttonsDiv.innerHTML = '';
+                sheetNames.forEach((sheetName, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'sheet-btn' + (idx === currentSheetIndex ? ' active' : '');
+                    btn.textContent = sheetName;
+                    btn.addEventListener('click', () => processSheet(idx));
+                    buttonsDiv.appendChild(btn);
+                });
+            }
+
+            function processExcel(file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        workbookData = XLSX.read(data, { type: 'array' });
+                        sheetNames = workbookData.SheetNames;
+                        if (!sheetNames.length) throw new Error("No sheets found");
+
+                        renderSheetSelector();
+                        currentSheetIndex = 0;
+                        const firstSheetName = sheetNames[0];
+                        const worksheet = workbookData.Sheets[firstSheetName];
+                        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+
+                        if (!rows || rows.length < 2) throw new Error("Empty file");
+
+                        const headers = rows[0].map(cell => String(cell || "").trim());
+                        currentRows = rows;
+                        currentHeaders = headers;
+                        const jsonData = generateJsonFromExcel(rows, headers);
+                        if (jsonData.length === 0) throw new Error("No valid songs found");
+                        currentData = jsonData;
+                        displayExcelTable(rows, headers);
+                        displayJsonOutput(jsonData);
+                        document.getElementById('sheetInfo').innerHTML =
+                            `<img src="svg/file-report.svg" alt="File" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;"> Currently: <strong>${escapeHtml(firstSheetName)}</strong> (${jsonData.length} songs)`;
+                        showExcelStatus(
+                            `<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-3px;"> File loaded! Found ${sheetNames.length} sheet(s). "${firstSheetName}" has ${jsonData.length} songs.`,
+                            "success");
+                        document.getElementById('previewArea').style.display = 'grid';
+                    } catch (error) {
+                        showExcelStatus("Error: " + error.message, "error");
+                        document.getElementById('sheetSelectorContainer').style.display = 'none';
+                    }
+                };
+                reader.onerror = () => showExcelStatus("Error reading file", "error");
+
+                if (file.name.endsWith('.csv')) {
+                    reader.readAsText(file, "UTF-8");
+                } else {
+                    reader.readAsArrayBuffer(file);
+                }
+            }
+
+            function copyExcelJson() {
+                if (currentData.length === 0) { showExcelStatus("No data to copy", "error"); return; }
+                navigator.clipboard.writeText(JSON.stringify(currentData, null, 4)).then(() => showExcelStatus(
+                    "JSON copied!", "success"));
+            }
+
+            function downloadExcelJson() {
+                if (currentData.length === 0) return;
+                const blob = new Blob([JSON.stringify(currentData, null, 4)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                const sheetName = sheetNames[currentSheetIndex] || 'songs';
+                a.download = `${sheetName}_${new Date().toISOString().slice(0, 19)}.json`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+                showExcelStatus("JSON downloaded!", "success");
+            }
+
+            function clearExcel() {
+                currentData = [];
+                currentHeaders = [];
+                currentRows = [];
+                workbookData = null;
+                sheetNames = [];
+                currentSheetIndex = 0;
+                document.getElementById('previewArea').style.display = 'none';
+                document.getElementById('jsonOutput').textContent = '[]';
+                document.getElementById('excelInput').value = '';
+                document.getElementById('sheetSelectorContainer').style.display = 'none';
+                document.getElementById('sheetButtons').innerHTML = '';
+                document.getElementById('sheetInfo').innerHTML = '';
+                showExcelStatus("Cleared", "success");
+            }
+
+            // Event listeners
+            document.getElementById('excelInput').addEventListener('change', (e) => {
+                if (e.target.files[0]) processExcel(e.target.files[0]);
+                e.target.value = '';
+            });
+            document.getElementById('copyJsonBtn').addEventListener('click', copyExcelJson);
+            document.getElementById('downloadJsonBtn').addEventListener('click', downloadExcelJson);
+            document.getElementById('clearExcelBtn').addEventListener('click', clearExcel);
+
+            const uploadAreaExcel = document.getElementById('uploadAreaExcel');
+            uploadAreaExcel.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadAreaExcel.style.borderColor = '#7c94f5';
+            });
+            uploadAreaExcel.addEventListener('dragleave', () => { uploadAreaExcel.style.borderColor = '#4c6ef5'; });
+            uploadAreaExcel.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadAreaExcel.style.borderColor = '#4c6ef5';
+                const file = e.dataTransfer.files[0];
+                if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv')))
+                    processExcel(file);
+                else showExcelStatus("Please upload Excel/CSV", "error");
+            });
+        })();
+
+        // ============================================================
+        // ==================== TAB 3: JSON RESEQUENCER ================
+        // ============================================================
+        (function () {
+            const textarea = document.getElementById('jsonInputArea');
+            const processBtn = document.getElementById('processJsonBtn');
+            const clearBtn = document.getElementById('clearInputBtn');
+            const pasteExampleBtn = document.getElementById('pasteExampleBtn');
+            const copyOutputBtn = document.getElementById('copyOutputBtn');
+            const downloadOutputBtn = document.getElementById('downloadOutputBtn');
+            const outputDisplayDiv = document.getElementById('outputJsonDisplay');
+            const outputCountBadge = document.getElementById('outputCountBadge');
+            const inputStatusDiv = document.getElementById('inputStatus');
+
+            let currentSequencedArray = [];
+
+            function showJsonStatus(message, isError = false) {
+                // Replace ⚠️ with SVG icon
+                if (message.includes('⚠️')) {
+                    message = message.replace('⚠️', '<img src="svg/alert-triangle.svg" alt="Warning" style="width: 13px; height: 13px; filter: brightness(0) invert(1); margin-right: 4px; vertical-align: middle;">');
+                }
+                // Replace 📋 with clipboard-check.svg
+                if (message.includes('📋')) {
+                    message = message.replace('📋', '<img src="svg/clipboard-check.svg" alt="Clipboard" style="width: 13px; height: 13px; filter: brightness(0) invert(1); margin-right: 4px; vertical-align: middle;">');
+                }
+                inputStatusDiv.innerHTML =
+                    `<div class="status-msg ${isError ? 'status-error' : 'status-success'}">${message}</div>`;
+                setTimeout(() => { if (inputStatusDiv.innerHTML.includes(message)) inputStatusDiv.innerHTML = ''; }, 4000);
+            }
+
+            function resequenceIdsFromArray(inputArray) {
+                if (!Array.isArray(inputArray) || inputArray.length === 0) throw new Error(
+                    "Invalid input: expected non-empty array");
+                return inputArray.map((item, index) => {
+                    const { id, ...rest } = item;
+                    return { id: index + 1, ...rest };
+                });
+            }
+
+            function parseJsonFromInput(rawText) {
+                let trimmed = rawText.trim();
+                if (!trimmed) throw new Error("Paste JSON data first");
+                try { return JSON.parse(trimmed); } catch (e) {
+                    let fixed = trimmed.replace(/,\s*}/g, '}').replace(/,\s*\]/g, ']');
+                    try { return JSON.parse(fixed); } catch (e2) { throw new Error("Invalid JSON format"); }
+                }
+            }
+
+            function updateOutputPanel(sequencedArray) {
+                if (!sequencedArray || sequencedArray.length === 0) {
+                    outputDisplayDiv.textContent = '[]\n/* No valid data */';
+                    outputCountBadge.textContent = '0 items';
+                    currentSequencedArray = [];
+                    return;
+                }
+                currentSequencedArray = sequencedArray;
+                outputDisplayDiv.textContent = JSON.stringify(sequencedArray, null, 4);
+                outputCountBadge.textContent = `${sequencedArray.length} item${sequencedArray.length !== 1 ? 's' : ''}`;
+            }
+
+            function processAndResequence() {
+                const rawJsonText = textarea.value;
+                if (!rawJsonText.trim()) { showJsonStatus("Paste JSON array first", true); return; }
+                try {
+                    let parsed = parseJsonFromInput(rawJsonText);
+                    if (!Array.isArray(parsed)) {
+                        if (typeof parsed === 'object' && parsed !== null) parsed = [parsed];
+                        else throw new Error("JSON must be an array");
+                    }
+                    if (parsed.length === 0) throw new Error("Array is empty");
+                    const newSequenced = resequenceIdsFromArray(parsed);
+                    updateOutputPanel(newSequenced);
+                    showJsonStatus(
+                        `<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-3px;"> Success: ${newSequenced.length} songs re-sequenced! IDs: 1 → ${newSequenced.length}`,
+                        false);
+                } catch (error) { showJsonStatus(`${error.message}`, true); }
+            }
+
+            function loadExampleData() {
+                const exampleArray = [
+                    {
+                        "id": 158, "title": "Sun Saathiya", "artist": "Divya Kumar, Priya Saraiya", "album": "ABCD 2",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e024634da1d297644a35619f4fc",
+                        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Sun%20Saathiya.mp3"
+                    },
+                    {
+                        "id": 156, "title": "Bebo", "artist": "Anu Malik, Alisha Chinai", "album": "Kambakkht Ishq",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0264699df17da4eea56a19b318",
+                        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Bebo.mp3"
+                    },
+                    {
+                        "id": 140, "title": "Zaalima", "artist": "Arijit Singh, Harshdeep Kaur", "album": "Raees",
+                        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02fced3ea9af59ad98c142279e",
+                        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Zaalima.mp3"
+                    }
+                ];
+                textarea.value = JSON.stringify(exampleArray, null, 4);
+                showJsonStatus("Example loaded! Click 'Resequence IDs'", false); setTimeout(() => processAndResequence(), 50);
+            }
+
+            async function copyOutputJson() {
+                if (!currentSequencedArray.length) { showJsonStatus("No processed JSON yet", true); return; }
+                await navigator.clipboard.writeText(JSON.stringify(currentSequencedArray, null, 4));
+                showJsonStatus("Copied! Fresh sequential JSON", false);
+                showToast('<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> JSON copied!');
+            }
+
+            function downloadJson() {
+                if (!currentSequencedArray.length) return;
+                const blob = new Blob([JSON.stringify(currentSequencedArray, null, 4)], { type: "application/json" });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `playlist_sequential_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+                showJsonStatus("JSON downloaded!", false);
+            }
+
+            function clearAllJson() {
+                textarea.value = '';
+                outputDisplayDiv.textContent = '{ "✨": "Paste JSON and click \'Resequence IDs\'" }';
+                currentSequencedArray = [];
+                outputCountBadge.textContent = '0 items';
+                showJsonStatus("Cleared", false);
+            }
+
+            processBtn.addEventListener('click', processAndResequence);
+            clearBtn.addEventListener('click', clearAllJson);
+            pasteExampleBtn.addEventListener('click', loadExampleData);
+            copyOutputBtn.addEventListener('click', copyOutputJson);
+            downloadOutputBtn.addEventListener('click', downloadJson);
+
+            textarea.placeholder = 'Paste JSON array here... Example format:\n[\n  {\n    "id": 158,\n    "title": "Sun Saathiya",\n    "artist": "Divya Kumar, Priya Saraiya",\n    "album": "ABCD 2",\n    "cover": "https://...",\n    "url": "https://raw.githubusercontent.com/.../Song.mp3"\n  }\n]';
+        })();
+    </script>
+</body>
+
+</html>
