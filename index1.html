@@ -1,1 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Only-Beats-Tool - Lyrics URL Generator</title>
+    <link rel="icon" href="svg/headphone-alt-2.svg" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #eef2ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffffff, #7c8ef9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header p {
+            color: #9aa9cf;
+            margin-top: 8px;
+        }
+
+        .url-example {
+            background: #0b0f1c;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            color: #6fdb92;
+            word-break: break-all;
+            display: inline-block;
+        }
+
+        /* Back Button */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #9aa9cf;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 8px 16px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f4e;
+        }
+
+        .back-link:hover {
+            background: rgba(76, 110, 245, 0.15);
+            color: white;
+            border-color: #4c6ef5;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(14, 19, 37, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            border: 1px solid #2a2f4e;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background: #0b1022;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #262e4e;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: -1.8rem -1.8rem 1.5rem -1.8rem;
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+
+        .badge-icon {
+            background: #4c6ef5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: normal;
+        }
+
+        .badge-icon.green {
+            background: #1DB954;
+            color: #0d1117;
+        }
+
+        textarea {
+            width: 100%;
+            background: #0a0f1c;
+            border: 1px solid #222b44;
+            border-radius: 1rem;
+            padding: 1rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #d6e6ff;
+            resize: vertical;
+            outline: none;
+            line-height: 1.5;
+            min-height: 250px;
+        }
+
+        textarea:focus {
+            border-color: #4c6ef5;
+            box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.15);
+        }
+
+        textarea:read-only {
+            color: #8b949e;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            background: #4c6ef5;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #6a82fc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 110, 245, 0.25);
+        }
+
+        button.green {
+            background: #1DB954;
+            color: #0d1117;
+        }
+
+        button.green:hover {
+            background: #1ed760;
+        }
+
+        button.secondary {
+            background: #2a3355;
+        }
+
+        button.secondary:hover {
+            background: #3f4a72;
+        }
+
+        button.outline {
+            background: transparent;
+            border: 1px solid #4c6ef5;
+            color: #b3c7ff;
+        }
+
+        button.outline:hover {
+            background: #4c6ef522;
+        }
+
+        .output-wrapper {
+            position: relative;
+        }
+
+        .output-wrapper .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #2a3355;
+            border: 1px solid #3a4568;
+            border-radius: 6px;
+            color: #b3c7ff;
+            padding: 4px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .output-wrapper .copy-btn:hover {
+            background: #3f4a72;
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 30px;
+            padding: 0.8rem 1rem;
+            margin-top: 1rem;
+            background: #0a0f1c;
+            border-radius: 1rem;
+            border: 1px solid #1d2640;
+            color: #9aa9cf;
+            font-size: 0.85rem;
+        }
+
+        .stats strong {
+            color: #b9c8ff;
+        }
+
+        .stats .green-text {
+            color: #1DB954;
+        }
+
+        .status-msg {
+            padding: 10px 16px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-success {
+            background: #1f5e3a30;
+            border-left: 4px solid #4cd964;
+            color: #c0ffd6;
+        }
+
+        .status-error {
+            background: #792e3e30;
+            border-left: 4px solid #ff5e6e;
+            color: #ffbfc9;
+        }
+
+        .footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5a6d94;
+            border-top: 1px solid #1d2640;
+            padding-top: 1.2rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0b1f2b;
+            color: #d6eaff;
+            padding: 10px 28px;
+            border-radius: 60px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            border: 1px solid #4c6ef5;
+            font-size: 0.85rem;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .how-to-list {
+            font-size: 14px;
+            color: #8b949e;
+            line-height: 2.2;
+            padding-left: 20px;
+        }
+
+        .how-to-list code {
+            background: #0a0f1c;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #6fdb92;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .back-link {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .card-header {
+                margin: -1.2rem -1.2rem 1rem -1.2rem;
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-group button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .output-wrapper .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            textarea {
+                min-height: 180px;
+                font-size: 0.7rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .header p {
+                font-size: 0.85rem;
+            }
+
+            .url-example {
+                font-size: 0.6rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .how-to-list {
+                font-size: 13px;
+                padding-left: 16px;
+            }
+
+            .how-to-list code {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header" style="text-align: center;">
+            <div class="header-top"
+                style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; position: relative;">
+                <a href="index.html" class="back-link"
+                    style="position: absolute; left: 0; display: inline-flex; align-items: center; gap: 8px; color: #9aa9cf; text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 8px 16px; border-radius: 40px; background: rgba(255, 255, 255, 0.05); border: 1px solid #2a2f4e; transition: all 0.2s;">
+                    <img src="svg/reply-big.svg" alt="Back"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1); opacity: 0.7;">
+                    Back to Tool
+                </a>
+                <h1
+                    style="margin: 0; font-size: 1.6rem; background: linear-gradient(135deg, #ffffff, #7c8ef9); -webkit-background-clip: text; background-clip: text; color: transparent; display: flex; align-items: center; gap: 12px;">
+                    <img src="svg/headphone-alt-2.svg" alt="Tool"
+                        style="width: 26px; height: 26px; filter: brightness(0) invert(1);">
+                    LRCLIB Lyrics URL Generator
+                </h1>
+            </div>
+            <p style="color: #9aa9cf; font-size: 0.9rem;">
+                Paste your <strong style="color: #b9c8ff;">SONGS_DATABASE</strong> array and get a new array with <code
+                    style="color: #6fdb92;">lyricsUrl</code> added
+            </p>
+            <div class="url-example" style="display: inline-block;">
+                <img src="svg/link.svg" alt="Link"
+                    style="width: 10px; height: 10px; filter: brightness(0) invert(1); margin-right: 3px;">
+                Format: https://lrclib.net/api/search?track_name=TRACK&artist_name=ARTIST&album=ALBUM
+            </div>
+        </div>
+
+        <!-- Input Card -->
+        <div class="card">
+            <div class="card-header">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <img src="svg/edit.svg" alt="Input"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                    Input: Your SONGS_DATABASE
+                </span>
+                <span class="badge-icon">JSON Array</span>
+            </div>
+            <textarea id="inputArea" placeholder="Paste your SONGS_DATABASE array here...">const SONGS_DATABASE = [
+    {
+        "id": 1,
+        "title": "Chupke Chupke Raat Din",
+        "artist": "Ghulam Ali",
+        "album": "Nikaah",
+        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02a1fd486925da9490d70a9d2f",
+        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Chupke%20Chupke%20Raat%20Din.mp3"
+    }
+];</textarea>
+            <div class="btn-group">
+                <button class="green" id="generateBtn">
+                    <img src="svg/refresh-cw-alt.svg" alt="Generate"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Generate Lyrics URLs
+                </button>
+                <button class="secondary" id="clearBtn">
+                    <img src="svg/trash.svg" alt="Clear"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Clear
+                </button>
+                <button class="outline" id="exampleBtn">
+                    <img src="svg/eye-alt.svg" alt="Example"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Load Example
+                </button>
+            </div>
+        </div>
+
+        <!-- Output Card -->
+        <div class="card">
+            <div class="card-header">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <img src="svg/scan-detail.svg" alt="Output"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                    Output: SONGS_DATABASE with lyricsUrl
+                </span>
+                <span class="badge-icon green">Ready</span>
+            </div>
+            <div class="output-wrapper">
+                <button class="copy-btn" id="copyBtn">
+                    <img src="svg/copy.svg" alt="Copy"
+                        style="width: 14px; height: 14px; filter: brightness(0) invert(1);">
+                    Copy
+                </button>
+                <textarea id="outputArea" readonly
+                    style="min-height: 280px; color: #8b949e;">Click "Generate Lyrics URLs" to see the result...</textarea>
+            </div>
+            <div class="stats" id="stats">
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <img src="svg/list-music.svg" alt="Songs"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Songs: <strong id="songCount">0</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <img src="svg/music-note.svg" alt="Lyrics"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    With lyrics URL: <strong id="urlCount" style="color: #1DB954;">0</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <img src="svg/refresh-cw-alt.svg" alt="Status"
+                        style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                    Status: <strong id="statusText" style="color: #8b949e;">Ready</strong>
+                </span>
+            </div>
+        </div>
+
+        <!-- How to Use -->
+        <div class="card" style="border-color: #1DB95433;">
+            <div class="card-header" style="border-bottom-color: #1DB95433;">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <img src="svg/light-bulb-alt.svg" alt="Info"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+                    How to Use
+                </span>
+                <span class="badge-icon green">Quick Guide</span>
+            </div>
+            <ol class="how-to-list">
+                <li>Paste your <code>SONGS_DATABASE</code> array in the input box above.</li>
+                <li>Click <strong style="color: #1DB954;">"Generate Lyrics URLs"</strong>.</li>
+                <li>The output will contain your original data plus a new <code>lyricsUrl</code> field for each song.
+                </li>
+                <li>Copy the output and paste it back into your <code>songs.js</code> file.</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <img src="svg/headphone-alt-2.svg" alt="Only-Beats"
+                style="width:14px;height:14px;filter:brightness(0) invert(1);opacity:0.4;margin-right:4px;vertical-align:middle;" />
+            Only-Beats-Tool · By Dhananjay Patil
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <img src="svg/check-square.svg" alt="Check"
+            style="width: 13px; height: 13px; filter: brightness(0) invert(1); margin-right: 3px; margin-bottom: -2px;">
+        Copied!
+    </div>
+
+    <script>
+        // ============================================================
+        // 1. DOM elements
+        // ============================================================
+        const inputArea = document.getElementById('inputArea');
+        const outputArea = document.getElementById('outputArea');
+        const generateBtn = document.getElementById('generateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const exampleBtn = document.getElementById('exampleBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const songCount = document.getElementById('songCount');
+        const urlCount = document.getElementById('urlCount');
+        const statusText = document.getElementById('statusText');
+        const toastEl = document.getElementById('toast');
+        let toastTimer;
+
+        // ============================================================
+        // 2. Toast
+        // ============================================================
+        function showToast(msg) {
+            toastEl.innerHTML = `<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> ${msg}`;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+        }
+
+        // ============================================================
+        // 3. Core function: build lyrics URL
+        // ============================================================
+        function buildLyricsUrl(song) {
+            const track = encodeURIComponent(song.title || '');
+            const artist = encodeURIComponent(song.artist || '');
+            const album = encodeURIComponent(song.album || '');
+            return `https://lrclib.net/api/search?track_name=${track}&artist_name=${artist}&album=${album}`;
+        }
+
+        // ============================================================
+        // 4. Generate lyrics URLs
+        // ============================================================
+        function generateLyricsUrls() {
+            const inputText = inputArea.value.trim();
+            if (!inputText) {
+                outputArea.value = '⚠️ Please paste your SONGS_DATABASE first.';
+                statusText.textContent = 'Error: No input';
+                statusText.style.color = '#f85149';
+                return;
+            }
+
+            try {
+                let songsArray = null;
+
+                // Attempt 1: Direct eval
+                try {
+                    let clean = inputText.replace(/^const\s+SONGS_DATABASE\s*=\s*/, '');
+                    clean = clean.replace(/;?\s*$/, '');
+                    songsArray = Function('"use strict"; return (' + clean + ')')();
+                } catch (e) {
+                    // Attempt 2: Find array via regex
+                    const match = inputText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                    if (match) {
+                        try {
+                            songsArray = Function('"use strict"; return (' + match[0] + ')')();
+                        } catch (e2) {
+                            throw new Error('Could not parse the array. Please make sure it\'s a valid JavaScript array.');
+                        }
+                    } else {
+                        throw new Error('No valid array found. Please paste your SONGS_DATABASE.');
+                    }
+                }
+
+                if (!Array.isArray(songsArray) || songsArray.length === 0) {
+                    throw new Error('The input is not a valid array or is empty.');
+                }
+
+                // Add lyricsUrl to each song
+                const updatedSongs = songsArray.map(song => ({
+                    ...song,
+                    lyricsUrl: buildLyricsUrl(song)
+                }));
+
+                // Format output
+                const output = 'const SONGS_DATABASE = ' + JSON.stringify(updatedSongs, null, 4) + ';';
+                outputArea.value = output;
+
+                // Update stats
+                songCount.textContent = updatedSongs.length;
+                const withUrl = updatedSongs.filter(s => s.lyricsUrl).length;
+                urlCount.textContent = withUrl;
+                statusText.textContent = '✅ Generated successfully!';
+                statusText.style.color = '#3fb950';
+
+                // Auto-select output for easy copy
+                outputArea.select();
+
+            } catch (err) {
+                outputArea.value = '❌ Error: ' + err.message;
+                statusText.textContent = '❌ Failed';
+                statusText.style.color = '#f85149';
+                console.error(err);
+            }
+        }
+
+        // ============================================================
+        // 5. Event listeners
+        // ============================================================
+        generateBtn.addEventListener('click', generateLyricsUrls);
+
+        clearBtn.addEventListener('click', () => {
+            inputArea.value = '';
+            outputArea.value = 'Click "Generate Lyrics URLs" to see the result...';
+            songCount.textContent = '0';
+            urlCount.textContent = '0';
+            statusText.textContent = 'Ready';
+            statusText.style.color = '#8b949e';
+        });
+
+        exampleBtn.addEventListener('click', () => {
+            const example = `const SONGS_DATABASE = [
+    {
+        "id": 1,
+        "title": "Chupke Chupke Raat Din",
+        "artist": "Ghulam Ali",
+        "album": "Nikaah",
+        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02a1fd486925da9490d70a9d2f",
+        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Chupke%20Chupke%20Raat%20Din.mp3"
+    },
+    {
+        "id": 2,
+        "title": "Hothon Se Chhu Lo Tum",
+        "artist": "Jagjit Singh",
+        "album": "Dard-E-Jigar",
+        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02b5eba194cd2f743be9a0f87b",
+        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Hothon%20Se%20Chhu%20Lo%20Tum.mp3"
+    },
+    {
+        "id": 3,
+        "title": "Hoshwalon Ko Khabar Kya",
+        "artist": "Jagjit Singh",
+        "album": "Sarfarosh",
+        "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e026adbe3457a317569ef6f92d4",
+        "url": "https://raw.githubusercontent.com/only-beats/Forever-in-Sync/main/Hoshwalon%20Ko%20Khabar%20Kya.mp3"
+    }
+]`;
+            inputArea.value = example;
+            generateLyricsUrls();
+        });
+
+        copyBtn.addEventListener('click', async () => {
+            const text = outputArea.value;
+            if (!text || text.startsWith('⚠️') || text.startsWith('❌') || text.startsWith('Click')) {
+                alert('No valid output to copy. Generate first!');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(text);
+                const original = copyBtn.textContent;
+                copyBtn.innerHTML =
+                    `<img src="svg/check-square.svg" alt="Copied" style="width:14px;height:14px;filter:brightness(0) invert(1);"> Copied!`;
+                setTimeout(() => {
+                    copyBtn.innerHTML =
+                        `<img src="svg/copy.svg" alt="Copy" style="width:14px;height:14px;filter:brightness(0) invert(1);"> Copy`;
+                }, 2000);
+                showToast('Copied to clipboard!');
+            } catch {
+                outputArea.select();
+                document.execCommand('copy');
+                showToast('Copied!');
+            }
+        });
+
+        // ============================================================
+        // 6. Keyboard shortcut: Ctrl+Enter to generate
+        // ============================================================
+        inputArea.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                generateLyricsUrls();
+            }
+        });
+
+        // ============================================================
+        // 7. Initial state
+        // ============================================================
+        statusText.style.color = '#8b949e';
+    </script>
+</body>
+
+</html>
