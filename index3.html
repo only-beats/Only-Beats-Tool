@@ -1,1 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Only-Beats-Tool · Music Metadata Extractor</title>
+    <link rel="icon" href="svg/headphone-alt-2.svg" type="image/x-icon">
+    <style>
+        /* ─── EXACT STYLES FROM YOUR ORIGINAL TOOL ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #eef2ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffffff, #7c8ef9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header p {
+            color: #9aa9cf;
+            margin-top: 8px;
+        }
+
+        .url-example {
+            background: #0b0f1c;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            color: #6fdb92;
+            word-break: break-all;
+            display: inline-block;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #9aa9cf;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 8px 16px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f4e;
+        }
+
+        .back-link:hover {
+            background: rgba(76, 110, 245, 0.15);
+            color: white;
+            border-color: #4c6ef5;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background: rgba(14, 19, 37, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            border: 1px solid #2a2f4e;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background: #0b1022;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #262e4e;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: -1.8rem -1.8rem 1.5rem -1.8rem;
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+
+        .badge-icon {
+            background: #4c6ef5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: normal;
+        }
+
+        .badge-icon.green {
+            background: #1DB954;
+            color: #0d1117;
+        }
+
+        .badge-icon.orange {
+            background: #f5a623;
+            color: #0d1117;
+        }
+
+        .badge-icon.purple {
+            background: #7c8ef9;
+            color: #0d1117;
+        }
+
+        .badge-spotify {
+            display: inline-block;
+            background: #1DB954;
+            color: #0d1117;
+            font-weight: 600;
+            font-size: 0.7rem;
+            padding: 2px 14px;
+            border-radius: 40px;
+            margin-left: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            background: #4c6ef5;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #6a82fc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 110, 245, 0.25);
+        }
+
+        button.green {
+            background: #1DB954;
+            color: #0d1117;
+        }
+
+        button.green:hover {
+            background: #1ed760;
+        }
+
+        button.secondary {
+            background: #2a3355;
+        }
+
+        button.secondary:hover {
+            background: #3f4a72;
+        }
+
+        button.outline {
+            background: transparent;
+            border: 1px solid #4c6ef5;
+            color: #b3c7ff;
+        }
+
+        button.outline:hover {
+            background: #4c6ef522;
+        }
+
+        button.danger {
+            background: #f85149;
+            color: #0d1117;
+        }
+
+        button.danger:hover {
+            background: #ff6b63;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            transform: none !important;
+        }
+
+        .upload-zone {
+            border: 2px dashed #2a3355;
+            border-radius: 1.2rem;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: #4c6ef5;
+            background: rgba(76, 110, 245, 0.05);
+        }
+
+        .upload-zone .icon-big {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            color: #9aa9cf;
+            font-size: 0.9rem;
+        }
+
+        .upload-zone .hint {
+            font-size: 0.75rem;
+            color: #5a6d94;
+            margin-top: 4px;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-list {
+            margin-top: 1.2rem;
+            background: #0a0f1c;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #1d2640;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-list .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #141c30;
+            font-size: 0.8rem;
+            color: #b9c8ff;
+        }
+
+        .file-list .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-list .file-item .badge {
+            background: #2a3355;
+            padding: 1px 10px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+            color: #9aa9cf;
+        }
+
+        .file-list .file-item .badge.mp3 {
+            background: #1DB95433;
+            color: #1DB954;
+            border: 1px solid #1DB95455;
+        }
+
+        .file-list .file-item .badge.other {
+            background: #f5a62333;
+            color: #f5a623;
+            border: 1px solid #f5a62355;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 30px;
+            padding: 0.8rem 1rem;
+            margin-top: 1rem;
+            background: #0a0f1c;
+            border-radius: 1rem;
+            border: 1px solid #1d2640;
+            color: #9aa9cf;
+            font-size: 0.85rem;
+        }
+
+        .stats strong {
+            color: #b9c8ff;
+        }
+
+        .stats .green-text {
+            color: #1DB954;
+        }
+
+        .stats .num {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stats .num.green {
+            color: #1DB954;
+        }
+
+        .stats .num.orange {
+            color: #f5a623;
+        }
+
+        .stats .num.purple {
+            color: #7c8ef9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #1d2640;
+            border-radius: 4px;
+            margin-top: 0.8rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4c6ef5, #7c8ef9);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .json-output {
+            background: #0a0f1c;
+            border-radius: 1rem;
+            border: 1px solid #1d2640;
+            padding: 1.2rem;
+            position: relative;
+            margin-top: 0.5rem;
+            max-height: 420px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #d6e6ff;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .json-output .key {
+            color: #7c8ef9;
+        }
+
+        .json-output .string {
+            color: #6fdb92;
+        }
+
+        .json-output .number {
+            color: #f5a623;
+        }
+
+        .json-output .boolean {
+            color: #f85149;
+        }
+
+        .json-output .null {
+            color: #f85149;
+        }
+
+        .json-output .bracket {
+            color: #b9c8ff;
+        }
+
+        .json-output::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .json-output::-webkit-scrollbar-track {
+            background: #0a0f1c;
+        }
+
+        .json-output::-webkit-scrollbar-thumb {
+            background: #2a3355;
+            border-radius: 10px;
+        }
+
+        .json-output::-webkit-scrollbar-thumb:hover {
+            background: #3f4a72;
+        }
+
+        .file-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .file-list::-webkit-scrollbar-track {
+            background: #0a0f1c;
+        }
+
+        .file-list::-webkit-scrollbar-thumb {
+            background: #2a3355;
+            border-radius: 10px;
+        }
+
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: #5a6d94;
+            font-size: 0.9rem;
+        }
+
+        .empty-state img {
+            opacity: 0.3;
+            margin-bottom: 10px;
+        }
+
+        .output-wrapper {
+            position: relative;
+        }
+
+        .output-wrapper .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #2a3355;
+            border: 1px solid #3a4568;
+            border-radius: 6px;
+            color: #b3c7ff;
+            padding: 4px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .output-wrapper .copy-btn:hover {
+            background: #3f4a72;
+            color: white;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0b1f2b;
+            color: #d6eaff;
+            padding: 10px 28px;
+            border-radius: 60px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            border: 1px solid #4c6ef5;
+            font-size: 0.85rem;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .how-to-list {
+            font-size: 14px;
+            color: #8b949e;
+            line-height: 2.2;
+            padding-left: 20px;
+        }
+
+        .how-to-list code {
+            background: #0a0f1c;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #6fdb92;
+            font-size: 0.8rem;
+        }
+
+        .footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5a6d94;
+            border-top: 1px solid #1d2640;
+            padding-top: 1.2rem;
+        }
+
+        .inline-icon {
+            filter: brightness(0) invert(1);
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .back-link {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .card-header {
+                margin: -1.2rem -1.2rem 1rem -1.2rem;
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-group button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .json-output {
+                max-height: 300px;
+                font-size: 0.7rem;
+            }
+
+            .upload-zone {
+                padding: 1.5rem 1rem;
+            }
+
+            .output-wrapper .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .header p {
+                font-size: 0.85rem;
+            }
+
+            .url-example {
+                font-size: 0.6rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .how-to-list {
+                font-size: 13px;
+                padding-left: 16px;
+            }
+
+            .how-to-list code {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="header" style="text-align: center;">
+            <div class="header-top"
+                style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; position: relative;">
+                <a href="index.html" class="back-link"
+                    style="position: absolute; left: 0; display: inline-flex; align-items: center; gap: 8px; color: #9aa9cf; text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 8px 16px; border-radius: 40px; background: rgba(255, 255, 255, 0.05); border: 1px solid #2a2f4e; transition: all 0.2s;">
+                    <img src="svg/reply-big.svg" alt="Back"
+                        style="width: 18px; height: 18px; filter: brightness(0) invert(1); opacity: 0.7;">
+                    Back to Tool
+                </a>
+                <h1
+                    style="margin: 0; font-size: 1.6rem; background: linear-gradient(135deg, #ffffff, #7c8ef9); -webkit-background-clip: text; background-clip: text; color: transparent; display: flex; align-items: center; gap: 12px;">
+                    <img src="svg/headphone-alt-2.svg" alt="Tool"
+                        style="width: 26px; height: 26px; filter: brightness(0) invert(1);">
+                    Music Metadata Extractor
+                </h1>
+            </div>
+            <p style="color:#9aa9cf;font-size:0.9rem;">
+                Upload a folder or select MP3 files — extract <strong style="color:#b9c8ff;">title · artist ·
+                    album</strong> as JSON
+            </p>
+            <div class="url-example" style="display:inline-block;">
+                <img src="svg/link.svg" alt="Link"
+                    style="width:10px;height:10px;filter:brightness(0) invert(1);margin-right:3px;">
+                Output: <code>[{ "title": "...", "artist": "...", "album": "..." }]</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── UPLOAD CARD ─── -->
+    <div class="card" style="border-color:#1DB95433;">
+        <div class="card-header" style="border-bottom-color:#1DB95433;">
+            <span style="display:flex;align-items:center;gap:8px;">
+                <img src="svg/link.svg" alt="Upload" style="width:18px;height:18px;filter:brightness(0) invert(1);">
+                Upload Music Files
+            </span>
+            <span class="badge-icon green">MP3 · M4A · FLAC</span>
+        </div>
+
+        <!-- Drop zone -->
+        <div class="upload-zone" id="dropZone">
+            <span class="icon-big">📂</span>
+            <p><strong>Drop your folder or files here</strong></p>
+            <p class="hint">or click to browse · supports <code>MP3</code>, <code>M4A</code>, <code>FLAC</code>,
+                <code>WAV</code>
+            </p>
+            <input type="file" id="fileInput" webkitdirectory multiple accept=".mp3,.m4a,.flac,.wav,.aac,.ogg">
+        </div>
+
+        <!-- File list -->
+        <div id="fileListContainer" style="display:none;">
+            <div class="file-list" id="fileList"></div>
+            <div class="stats" id="uploadStats" style="margin-top:0.8rem;">
+                <span style="display:inline-flex;align-items:center;gap:4px;">
+                    <img src="svg/database.svg" alt="Files"
+                        style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                    Total files: <strong id="totalFiles">0</strong>
+                </span>
+                <span style="display:inline-flex;align-items:center;gap:4px;">
+                    <img src="svg/headphone-alt-2.svg" alt="Audio"
+                        style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                    Audio: <strong id="audioFiles" style="color:#1DB954;">0</strong>
+                </span>
+                <span style="display:inline-flex;align-items:center;gap:4px;">
+                    <img src="svg/sd-card.svg" alt="Size"
+                        style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                    Size: <strong id="totalSize">0 KB</strong>
+                </span>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="green" id="processBtn" disabled>
+                <img src="svg/scan-detail.svg" alt="Extract"
+                    style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Extract Metadata
+            </button>
+            <button class="secondary" id="clearFilesBtn">
+                <img src="svg/trash.svg" alt="Clear" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Clear All
+            </button>
+            <button class="outline" id="selectFilesBtn">
+                <img src="svg/list-music.svg" alt="Select"
+                    style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Select Files (no folder)
+            </button>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar" id="progressBar">
+            <div class="fill" id="progressFill"></div>
+        </div>
+        <div id="progressLabel" style="font-size:0.75rem;color:#5a6d94;margin-top:4px;display:none;"></div>
+    </div>
+
+    <!-- ─── JSON OUTPUT CARD ─── -->
+    <div class="card" style="border-color:#7c8ef955;">
+        <div class="card-header" style="border-bottom-color:#7c8ef955;">
+            <span style="display:flex;align-items:center;gap:8px;">
+                <img src="svg/list-music.svg" alt="Output"
+                    style="width:18px;height:18px;filter:brightness(0) invert(1);">
+                JSON Output
+                <span style="font-size:0.7rem;font-weight:400;color:#5a6d94;margin-left:4px;">(title · artist ·
+                    album)</span>
+            </span>
+            <span class="badge-icon purple" id="resultBadge">waiting</span>
+        </div>
+
+        <div class="stats" id="statsBar" style="display:none;">
+            <span style="display:inline-flex;align-items:center;gap:4px;">
+                <img src="svg/database.svg" alt="Tracks" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Tracks: <strong id="trackCount" style="color:#7c8ef9;">0</strong>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:4px;">
+                <img src="svg/microphone.svg" alt="Artist"
+                    style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                With artist: <strong id="artistCount" style="color:#1DB954;">0</strong>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:4px;">
+                <img src="svg/movie.svg" alt="Album" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                With album: <strong id="albumCount" style="color:#f5a623;">0</strong>
+            </span>
+        </div>
+
+        <div class="output-wrapper">
+            <button class="copy-btn" id="copyJsonBtn">
+                <img src="svg/copy.svg" alt="Copy" style="width:14px;height:14px;filter:brightness(0) invert(1);">
+                Copy JSON
+            </button>
+            <div class="json-output" id="jsonOutput">
+                <div class="empty-state">
+                    <img src="svg/headphone-alt-2.svg" alt="Music"
+                        style="width:32px;height:32px;filter:brightness(0) invert(1);opacity:0.3;margin-bottom:10px;">
+                    <br>
+                    Upload a folder or MP3 files, then click <strong style="color:#1DB954;">"Extract Metadata"</strong>.
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group" id="exportBtns" style="display:none;">
+            <button class="secondary" id="downloadJsonBtn">
+                <img src="svg/scan-detail.svg" alt="Download"
+                    style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Download .json
+            </button>
+            <button class="secondary" id="copyCsvBtn">
+                <img src="svg/copy.svg" alt="Copy" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Copy CSV
+            </button>
+            <button class="outline" id="clearJsonBtn">
+                <img src="svg/trash.svg" alt="Clear" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                Clear Output
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── HOW TO USE ─── -->
+    <div class="card" style="border-color:#1DB95433;">
+        <div class="card-header" style="border-bottom-color:#1DB95433;">
+            <span style="display:flex;align-items:center;gap:8px;">
+                <img src="svg/light-bulb-alt.svg" alt="Info"
+                    style="width:18px;height:18px;filter:brightness(0) invert(1);">
+                How to Use
+            </span>
+            <span class="badge-icon green">Quick Guide</span>
+        </div>
+        <ol class="how-to-list">
+            <li><strong>Upload</strong> a folder or select MP3 files using the drop zone above.</li>
+            <li>The tool reads <strong>ID3 tags</strong> (title, artist, album) from each file.</li>
+            <li>If ID3 tags are missing, it <strong>parses the filename</strong> using common patterns.</li>
+            <li>Click <strong style="color:#1DB954;">"Extract Metadata"</strong> to generate the JSON.</li>
+            <li>Copy or download the JSON — ready for your <code>SONGS_DATABASE</code> or playlist analyzer.</li>
+        </ol>
+        <div
+            style="margin-top:0.8rem;padding:0.8rem 1rem;background:#0a0f1c;border-radius:0.8rem;border:1px solid #1d2640;font-size:0.75rem;color:#5a6d94;">
+            <strong style="color:#b9c8ff;">Filename patterns recognised:</strong>
+            <code style="color:#6fdb92;">Title - Artist.mp3</code> ·
+            <code style="color:#6fdb92;">Artist - Title.mp3</code> ·
+            <code style="color:#6fdb92;">Title (Artist).mp3</code> ·
+            <code style="color:#6fdb92;">Artist - Album - Title.mp3</code>
+        </div>
+    </div>
+
+    <div class="footer">
+        <img src="svg/headphone-alt-2.svg" alt="Only-Beats"
+            style="width:14px;height:14px;filter:brightness(0) invert(1);opacity:0.4;margin-right:4px;vertical-align:middle;">
+        Only-Beats-Tool · By Dhananjay Patil
+    </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <img src="svg/check-square.svg" alt="Check"
+            style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;">
+        Done
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.0/jsmediatags.min.js">
+    </script>
+    <script>
+        // ============================================================
+        // DOM refs
+        // ============================================================
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const fileList = document.getElementById('fileList');
+        const totalFiles = document.getElementById('totalFiles');
+        const audioFiles = document.getElementById('audioFiles');
+        const totalSize = document.getElementById('totalSize');
+        const processBtn = document.getElementById('processBtn');
+        const clearFilesBtn = document.getElementById('clearFilesBtn');
+        const selectFilesBtn = document.getElementById('selectFilesBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const progressLabel = document.getElementById('progressLabel');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const statsBar = document.getElementById('statsBar');
+        const trackCount = document.getElementById('trackCount');
+        const artistCount = document.getElementById('artistCount');
+        const albumCount = document.getElementById('albumCount');
+        const resultBadge = document.getElementById('resultBadge');
+        const exportBtns = document.getElementById('exportBtns');
+        const copyJsonBtn = document.getElementById('copyJsonBtn');
+        const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+        const copyCsvBtn = document.getElementById('copyCsvBtn');
+        const clearJsonBtn = document.getElementById('clearJsonBtn');
+        const toastEl = document.getElementById('toast');
+
+        let selectedFiles = [];
+        let extractedData = [];
+        let toastTimer;
+
+        // ─── Audio extensions (case-insensitive) ───
+        const AUDIO_EXTS = new Set(['.mp3', '.m4a', '.flac', '.wav', '.aac', '.ogg', '.m4b', '.opus']);
+
+        function isAudioFile(name) {
+            const ext = '.' + name.split('.').pop().toLowerCase();
+            return AUDIO_EXTS.has(ext);
+        }
+
+        function getAudioFiles(files) {
+            return files.filter(f => isAudioFile(f.name));
+        }
+
+        // ============================================================
+        // Toast
+        // ============================================================
+        function showToast(msg) {
+            toastEl.innerHTML =
+                `<img src="svg/check-square.svg" alt="Check" style="width:13px;height:13px;filter:brightness(0) invert(1);margin-right:3px;margin-bottom:-2px;"> ${msg}`;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+        }
+
+        // ============================================================
+        // File size formatter
+        // ============================================================
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        // ============================================================
+        // File list render
+        // ============================================================
+        function renderFileList(files) {
+            const audioFilesList = getAudioFiles(files);
+
+            let html = '';
+            const maxShow = 50;
+            const showFiles = files.slice(0, maxShow);
+            for (const f of showFiles) {
+                const isAudio = isAudioFile(f.name);
+                const badgeClass = isAudio ? 'mp3' : 'other';
+                const ext = f.name.split('.').pop().toLowerCase();
+                const label = isAudio
+                    ? `<img src="svg/sd-card.svg" style="width:12px;height:12px;filter:brightness(0) invert(1);vertical-align:middle;margin-right:4px;" /> ${ext.toUpperCase()}`
+                    : '📄 ' + ext.toUpperCase();
+                html += `<div class="file-item">
+            <span>${f.name}</span>
+            <span class="badge ${badgeClass}">${label} · ${formatSize(f.size)}</span>
+        </div>`;
+            }
+            if (files.length > maxShow) {
+                html += `<div class="file-item" style="color:#5a6d94;font-style:italic;">… and ${files.length - maxShow} more</div>`;
+            }
+            fileList.innerHTML = html || '<div style="color:#5a6d94;padding:0.5rem;">No files selected.</div>';
+
+            const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+            totalFiles.textContent = files.length;
+            audioFiles.textContent = audioFilesList.length;
+            totalSize.textContent = formatSize(totalBytes);
+
+            fileListContainer.style.display = 'block';
+            processBtn.disabled = audioFilesList.length === 0;
+
+            // Log for debugging
+            console.log(`📊 ${files.length} total files, ${audioFilesList.length} audio files`);
+        }
+
+        // ============================================================
+        // Handle file selection
+        // ============================================================
+        function handleFiles(fileListObj) {
+            const files = Array.from(fileListObj);
+            selectedFiles = files;
+            renderFileList(files);
+            clearOutput();
+
+            const audioCount = getAudioFiles(files).length;
+            showToast(`📁 ${files.length} files loaded (${audioCount} audio)`);
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFiles(e.target.files);
+            }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                handleFiles(e.dataTransfer.files);
+                const dt = new DataTransfer();
+                for (const f of e.dataTransfer.files) dt.items.add(f);
+                fileInput.files = dt.files;
+            }
+        });
+
+        selectFilesBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.mp3,.m4a,.flac,.wav,.aac,.ogg,.opus';
+            input.onchange = (e) => {
+                if (e.target.files.length) {
+                    handleFiles(e.target.files);
+                    const dt = new DataTransfer();
+                    for (const f of e.target.files) dt.items.add(f);
+                    fileInput.files = dt.files;
+                }
+            };
+            input.click();
+        });
+
+        clearFilesBtn.addEventListener('click', () => {
+            selectedFiles = [];
+            fileInput.value = '';
+            fileListContainer.style.display = 'none';
+            fileList.innerHTML = '';
+            processBtn.disabled = true;
+            clearOutput();
+            showToast('🗑️ Cleared all files');
+        });
+
+        // ============================================================
+        // Clear output
+        // ============================================================
+        function clearOutput() {
+            extractedData = [];
+            jsonOutput.innerHTML = `
+                <div class="empty-state">
+                    <img src="svg/headphone-alt-2.svg" alt="Music" style="width:32px;height:32px;filter:brightness(0) invert(1);opacity:0.3;margin-bottom:10px;">
+                    <br>
+                    Upload a folder or MP3 files, then click <strong style="color:#1DB954;">"Extract Metadata"</strong>.
+                </div>
+            `;
+            statsBar.style.display = 'none';
+            exportBtns.style.display = 'none';
+            resultBadge.textContent = 'waiting';
+            resultBadge.className = 'badge-icon purple';
+        }
+
+        clearJsonBtn.addEventListener('click', clearOutput);
+
+        // ============================================================
+        // Filename parser (fallback when ID3 missing)
+        // ============================================================
+        function parseFilename(name) {
+            let base = name.replace(/\.[^.]+$/, '').trim();
+            let title = base;
+            let artist = '';
+            let album = '';
+
+            let parts = base.split(/\s*[-–—]\s*/);
+            if (parts.length === 3) {
+                artist = parts[0].trim();
+                album = parts[1].trim();
+                title = parts[2].trim();
+                return { title, artist, album };
+            }
+
+            if (parts.length === 2) {
+                const first = parts[0].trim();
+                const second = parts[1].trim();
+                const artistIndicators = /\b(feat|ft\.?|&|featuring)\b/i;
+                if (artistIndicators.test(first) || (first.length < 20 && !artistIndicators.test(second))) {
+                    artist = first;
+                    title = second;
+                } else {
+                    title = first;
+                    artist = second;
+                }
+                return { title, artist, album };
+            }
+
+            const parenMatch = base.match(/^(.+?)\s*\(([^)]+)\)\s*$/);
+            if (parenMatch) {
+                title = parenMatch[1].trim();
+                artist = parenMatch[2].trim();
+                return { title, artist, album };
+            }
+
+            const bracketMatch = base.match(/^(.+?)\s*\[([^\]]+)\]\s*$/);
+            if (bracketMatch) {
+                title = bracketMatch[1].trim();
+                artist = bracketMatch[2].trim();
+                return { title, artist, album };
+            }
+
+            const yearParenMatch = base.match(/^(.+?)\s*[-–—]\s*(.+?)\s*\([0-9]{4}\)\s*[-–—]\s*(.+)$/);
+            if (yearParenMatch) {
+                artist = yearParenMatch[1].trim();
+                album = yearParenMatch[2].trim();
+                title = yearParenMatch[3].trim();
+                return { title, artist, album };
+            }
+
+            return { title: base, artist: '', album: '' };
+        }
+
+        function cleanString(str) {
+            if (!str) return '';
+            return str.replace(/\s+/g, ' ').trim();
+        }
+
+        // ============================================================
+        // Read ID3 tags from a file using jsmediatags
+        // ============================================================
+        function readID3(file) {
+            return new Promise((resolve) => {
+                if (typeof window.jsmediatags === 'undefined') {
+                    const parsed = parseFilename(file.name);
+                    resolve({
+                        title: parsed.title || file.name.replace(/\.[^.]+$/, ''),
+                        artist: parsed.artist || '',
+                        album: parsed.album || '',
+                    });
+                    return;
+                }
+
+                try {
+                    window.jsmediatags.read(file, {
+                        onSuccess: (tag) => {
+                            const tags = tag.tags || {};
+                            const title = cleanString(tags.title) || '';
+                            const artist = cleanString(tags.artist) || '';
+                            const album = cleanString(tags.album) || '';
+
+                            if (!title && !artist) {
+                                const parsed = parseFilename(file.name);
+                                resolve({
+                                    title: parsed.title || file.name.replace(/\.[^.]+$/, ''),
+                                    artist: parsed.artist || '',
+                                    album: parsed.album || '',
+                                });
+                            } else {
+                                resolve({ title, artist, album });
+                            }
+                        },
+                        onError: (err) => {
+                            console.warn('ID3 read error for', file.name, err);
+                            const parsed = parseFilename(file.name);
+                            resolve({
+                                title: parsed.title || file.name.replace(/\.[^.]+$/, ''),
+                                artist: parsed.artist || '',
+                                album: parsed.album || '',
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.warn('jsmediatags error:', err);
+                    const parsed = parseFilename(file.name);
+                    resolve({
+                        title: parsed.title || file.name.replace(/\.[^.]+$/, ''),
+                        artist: parsed.artist || '',
+                        album: parsed.album || '',
+                    });
+                }
+            });
+        }
+
+        // ============================================================
+        // Process all files
+        // ============================================================
+        async function processFiles() {
+            const audioFilesList = getAudioFiles(selectedFiles);
+
+            if (audioFilesList.length === 0) {
+                showToast('⚠️ No audio files found!');
+                return;
+            }
+
+            processBtn.disabled = true;
+            processBtn.innerHTML = `<span class="spinner"></span> Processing…`;
+
+            progressBar.classList.add('active');
+            progressLabel.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressLabel.textContent = `0 / ${audioFilesList.length}`;
+
+            const results = [];
+            let count = 0;
+
+            for (const file of audioFilesList) {
+                const data = await readID3(file);
+                results.push({
+                    title: data.title || file.name.replace(/\.[^.]+$/, ''),
+                    artist: data.artist || '',
+                    album: data.album || '',
+                });
+                count++;
+                progressFill.style.width = `${(count / audioFilesList.length) * 100}%`;
+                progressLabel.textContent = `${count} / ${audioFilesList.length}`;
+            }
+
+            extractedData = results;
+            displayResults(results);
+
+            progressBar.classList.remove('active');
+            progressLabel.style.display = 'none';
+            processBtn.innerHTML =
+                `<img src="svg/scan-detail.svg" alt="Extract" style="width:16px;height:16px;filter:brightness(0) invert(1);"> Extract Metadata`;
+            processBtn.disabled = false;
+
+            showToast(`✅ Extracted ${results.length} tracks`);
+        }
+
+        processBtn.addEventListener('click', processFiles);
+
+        // ============================================================
+        // Display results as JSON with syntax highlighting
+        // ============================================================
+        function displayResults(data) {
+            if (data.length === 0) {
+                clearOutput();
+                return;
+            }
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const highlighted = syntaxHighlight(jsonStr);
+            jsonOutput.innerHTML = highlighted;
+
+            statsBar.style.display = 'flex';
+            trackCount.textContent = data.length;
+            const withArtist = data.filter(d => d.artist && d.artist.trim().length > 0).length;
+            const withAlbum = data.filter(d => d.album && d.album.trim().length > 0).length;
+            artistCount.textContent = withArtist;
+            albumCount.textContent = withAlbum;
+
+            resultBadge.textContent = `${data.length} tracks`;
+            resultBadge.className = 'badge-icon green';
+            exportBtns.style.display = 'flex';
+        }
+
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(
+                /("(?:[^"\\]|\\.)*")(?=\s*:)|("(?:[^"\\]|\\.)*")|(\b\d+\.?\d*\b)|(\btrue\b|\bfalse\b|\bnull\b)|([{}\[\],])/g,
+                (match, key, str, num, bool, bracket) => {
+                    if (key) return `<span class="key">${key}</span>`;
+                    if (str) return `<span class="string">${str}</span>`;
+                    if (num) return `<span class="number">${num}</span>`;
+                    if (bool) return `<span class="boolean">${bool}</span>`;
+                    if (bracket) return `<span class="bracket">${bracket}</span>`;
+                    return match;
+                }
+            );
+        }
+
+        // ============================================================
+        // Copy / Download
+        // ============================================================
+        async function copyText(text, label) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(`${label} copied!`);
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast(`${label} copied!`);
+            }
+        }
+
+        copyJsonBtn.addEventListener('click', () => {
+            if (extractedData.length === 0) {
+                showToast('⚠️ No data to copy. Extract metadata first.');
+                return;
+            }
+            copyText(JSON.stringify(extractedData, null, 2), 'JSON');
+        });
+
+        downloadJsonBtn.addEventListener('click', () => {
+            if (extractedData.length === 0) {
+                showToast('⚠️ No data to download. Extract metadata first.');
+                return;
+            }
+            const blob = new Blob([JSON.stringify(extractedData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tracks_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('⬇️ JSON downloaded');
+        });
+
+        copyCsvBtn.addEventListener('click', () => {
+            if (extractedData.length === 0) {
+                showToast('⚠️ No data to copy. Extract metadata first.');
+                return;
+            }
+            const header = 'Title,Artist,Album';
+            const rows = extractedData.map(d =>
+                `"${d.title.replace(/"/g, '""')}","${d.artist.replace(/"/g, '""')}","${d.album.replace(/"/g, '""')}"`
+            );
+            const csv = [header, ...rows].join('\n');
+            copyText(csv, 'CSV');
+        });
+
+        // ============================================================
+        // Init
+        // ============================================================
+        function init() {
+            clearOutput();
+            showToast('🎵 Ready — upload a folder to start');
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
